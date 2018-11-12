@@ -16,12 +16,17 @@ public class CharGrammarTestChar {
     }
 
     @Test
-    public void acceptsString(){
+    public void acceptsStringTest1(){
         createTest1_1();
         assertTrue(charGrammar.naiveBelongs("00110101"));
+    }
+
+    @Test
+    public void acceptsStringTest2(){
         createTest2();
         assertFalse(charGrammar.naiveBelongs("aabbb"));
     }
+
      @Test
     public void testParseWorksMultiple(){
         ////createTest1();

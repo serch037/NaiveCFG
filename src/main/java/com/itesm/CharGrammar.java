@@ -58,11 +58,22 @@ public class CharGrammar {
         System.out.println("Done");
     }
 
+    public void naiveBelongsUI(){
+    }
+
     public boolean naiveBelongs(String target) {
         String current = ""+initial;
         String derivationTree = ""+initial;
         Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
+        if (tmp.getLeft()){
+            System.out.println("La cadena es aceptada");
+            drawDerivationTree(tmp.getRight());
+        }
         return tmp.getLeft();
+    }
+
+    public void drawDerivationTree(String derivationTree){
+        System.out.println(derivationTree);
     }
 
     public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
