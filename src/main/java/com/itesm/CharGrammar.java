@@ -64,7 +64,7 @@ public class CharGrammar {
         String derivationTree = ""+initial;
         Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
         if (tmp.getLeft()){
-            System.out.println("La cadena es aceptada");
+            System.out.printf("La cadena %s es aceptada\n", target);
             drawDerivationTree(tmp.getRight());
         }
         return tmp.getLeft();
