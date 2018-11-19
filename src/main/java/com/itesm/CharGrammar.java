@@ -1,10 +1,6 @@
 package com.itesm;
 
 
-import com.google.common.graph.Graph;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.ImmutableGraph;
-import com.google.common.graph.MutableGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -57,7 +53,7 @@ public class CharGrammar {
                         }
                     });
         }
-        System.out.println("Done");
+//        System.out.println("Done");
     }
 
     public void naiveBelongsUI(){
@@ -66,11 +62,7 @@ public class CharGrammar {
     public boolean naiveBelongs(String target) {
         String current = ""+initial;
         String derivationTree = ""+initial;
-        MutableGraph<Character> treeMut = GraphBuilder.directed().build();
-        treeMut.addNode('a');
-        treeMut.addNode('a');
-        treeMut.putEdge('a', 'a');
-        Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree, treeMut);
+        Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
         if (tmp.getLeft()){
             System.out.println("La cadena es aceptada");
             drawDerivationTree(tmp.getRight());
@@ -82,7 +74,7 @@ public class CharGrammar {
         System.out.println(derivationTree);
     }
 
-    public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree, MutableGraph<Character> tree) {
+    public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
         if (target.equals(accumulator)) {
             return new ImmutablePair<>(true, derivationTree);
         }
@@ -93,7 +85,7 @@ public class CharGrammar {
                 for (String str :tmp){
                     String newStr = substitute(accumulator, position,str);
                     String derivationTreeTmp = derivationTree +  "|" + accumulator.charAt(position)+ "->" + str;
-                    Pair<Boolean, String> ans  = naiveBelongsHelper(target, newStr, derivationTreeTmp, tree);
+                    Pair<Boolean, String> ans  = naiveBelongsHelper(target, newStr, derivationTreeTmp);
                     if (ans.getLeft()) {
                         return ans;
                     }
