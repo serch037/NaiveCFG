@@ -8,16 +8,22 @@ public class CharGrammarTestChar {
 
     @Test
     public void testisPartialMatch(){
+        createTest1_1();
+        assertFalse(charGrammar.isPartialMatchFromLeft("11", "110A"));
         createTest1();
-        assertTrue(charGrammar.isPartialMatch("0011", "00BB"));
-        assertTrue(charGrammar.isPartialMatch("0011", "001B"));
-        assertTrue(charGrammar.isPartialMatch("0011", "0011"));
-        assertFalse(charGrammar.isPartialMatch("0011", "0010"));
+        assertTrue(charGrammar.isPartialMatchFromLeft("0011", "00BB"));
+        assertTrue(charGrammar.isPartialMatchFromLeft("0011", "001B"));
+        assertTrue(charGrammar.isPartialMatchFromLeft("0011", "0011"));
+        assertFalse(charGrammar.isPartialMatchFromLeft("0011", "0010"));
+        assertTrue(charGrammar.isPartialMatchFromLeft("0011", "00BB"));
     }
 
     @Test
     public void acceptsStringTest1(){
         createTest1_1();
+        assertTrue(charGrammar.naiveBelongs("11"));
+        assertTrue(charGrammar.naiveBelongs("1"));
+        assertTrue(charGrammar.naiveBelongs("111"));
         assertTrue(charGrammar.naiveBelongs("00110101"));
     }
 

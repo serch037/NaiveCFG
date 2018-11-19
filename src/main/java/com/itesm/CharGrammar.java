@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
@@ -72,13 +73,20 @@ public class CharGrammar {
 
     public void drawDerivationTree(String derivationTree){
         System.out.println(derivationTree);
+        /*
+        String[] steps = derivationTree.split("\\|");
+        List<MutableNode> nodes = new ArrayList<>();
+        for (String step : steps) {
+            String[] substitute = step.split("(->)");
+        }
+        */
     }
 
     public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
         if (target.equals(accumulator)) {
             return new ImmutablePair<>(true, derivationTree);
         }
-        if (isPartialMatch(target, accumulator)) {
+        if (isPartialMatchFromLeft(target, accumulator)) {
             ArrayList<Integer> positions = getVariablePositions(accumulator);
             for (Integer position: positions) {
                 List<String> tmp =  grammarMap.get(accumulator.charAt(position));
@@ -107,13 +115,22 @@ public class CharGrammar {
     }
 
     // TODO: Potential bug if current has no more variables and its length is greater than target
-    public boolean isPartialMatch(String target, String current) {
-        char[] currentChars = current.toCharArray();
+    public boolean isPartialMatchFromLeft(String target, String current) {
+        ArrayList<Character> tmpCurrentChars = new ArrayList<>();
+        for (char c : current.toCharArray()) {
+            if (Character.isUpperCase(c) || c == '$'){
+                break;
+            }
+            tmpCurrentChars.add(c);
+        }
+        Character[] currentChars = new Character[tmpCurrentChars.size()];
+        currentChars = tmpCurrentChars.toArray(currentChars);
         char[] targetChars = target.toCharArray();
         int minLength = Math.min(currentChars.length, targetChars.length);
 
-        for (int i = 0; i < minLength; i++) {
-            if (currentChars[i] != targetChars[i] && !variables.contains(currentChars[i])) {
+        if (currentChars.length > targetChars.length) return false;
+        for (int i = 0; i < currentChars.length; i++) {
+            if (currentChars[i] != targetChars[i]) {
                 return false;
             }
         }
