@@ -1,14 +1,16 @@
 package com.itesm;
 
 
+import com.google.common.graph.Graph;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.ImmutableGraph;
+import com.google.common.graph.MutableGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
@@ -64,7 +66,11 @@ public class CharGrammar {
     public boolean naiveBelongs(String target) {
         String current = ""+initial;
         String derivationTree = ""+initial;
-        Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
+        MutableGraph<Character> treeMut = GraphBuilder.directed().build();
+        treeMut.addNode('a');
+        treeMut.addNode('a');
+        treeMut.putEdge('a', 'a');
+        Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree, treeMut);
         if (tmp.getLeft()){
             System.out.println("La cadena es aceptada");
             drawDerivationTree(tmp.getRight());
@@ -76,7 +82,7 @@ public class CharGrammar {
         System.out.println(derivationTree);
     }
 
-    public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
+    public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree, MutableGraph<Character> tree) {
         if (target.equals(accumulator)) {
             return new ImmutablePair<>(true, derivationTree);
         }
@@ -87,7 +93,7 @@ public class CharGrammar {
                 for (String str :tmp){
                     String newStr = substitute(accumulator, position,str);
                     String derivationTreeTmp = derivationTree +  "|" + accumulator.charAt(position)+ "->" + str;
-                    Pair<Boolean, String> ans  = naiveBelongsHelper(target, newStr, derivationTreeTmp);
+                    Pair<Boolean, String> ans  = naiveBelongsHelper(target, newStr, derivationTreeTmp, tree);
                     if (ans.getLeft()) {
                         return ans;
                     }
@@ -125,5 +131,8 @@ public class CharGrammar {
     public String substitute(String str, int index, String other) {
         if (other.equals(this.empty)) other = "";
         return str.substring(0, index) + other + str.substring(index + 1, str.length());
+    }
+    public static void main(String[] args) {
+        System.out.println("Hello");
     }
 }
