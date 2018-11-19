@@ -13,12 +13,12 @@ public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
     public Character initial;
     public HashSet<Character> variables;
-    public String empty;
+    public char empty;
 
     public CharGrammar(){
         grammarMap = new HashMap<>();
         variables =  new HashSet<>();
-        empty = "$";
+        empty = '$';
     }
 
     public CharGrammar(String[] strs) {
@@ -118,7 +118,7 @@ public class CharGrammar {
     public boolean isPartialMatchFromLeft(String target, String current) {
         ArrayList<Character> tmpCurrentChars = new ArrayList<>();
         for (char c : current.toCharArray()) {
-            if (Character.isUpperCase(c) || c == '$'){
+            if (Character.isUpperCase(c) || c == empty){
                 break;
             }
             tmpCurrentChars.add(c);
