@@ -82,6 +82,7 @@ public class CharGrammar {
         return tmp.getLeft();
     }
 
+    public void drawDerivationTree(String derivationTree){
         System.out.println(derivationTree);
         try {
             createGraph(derivationTree);
@@ -94,7 +95,7 @@ public class CharGrammar {
     
     public void createGraph(String derivationTree) throws IOException{
         ArrayList<Node> nodes = createNodesArray(derivationTree);
-        Graph graph = graph("ProyectoMates").directed().graphAttr().with(RankDir.LEFT_TO_RIGHT);
+        Graph graph = graph("ProyectoMates").directed().graphAttr().with(RankDir.TOP_TO_BOTTOM);
         for(Node n:nodes) {
             graph = graph.with(n);
         }
@@ -139,12 +140,13 @@ public class CharGrammar {
                 }
             }
             
-            Node parent = node(""+splitArrow[0].charAt(0)+"_"+num);
+            Node parent = node(""+splitArrow[0].charAt(0)+"_"+num).with(Label.of(""+splitArrow[0].charAt(0)));
             System.out.println(""+splitArrow[0].charAt(0)+"_"+num+"->");
             for(int j = 0; j<splitArrow[1].length(); j++) {
                 //System.out.println(splitArrow[1].charAt(j));
-                if(splitArrow[1].charAt(j) >= '0' && splitArrow[1].charAt(j) <= '9') {
-                    Node son = node(""+splitArrow[1].charAt(j)+"_"+idCount);
+//                if(splitArrow[1].charAt(j) >= '0' && splitArrow[1].charAt(j) <= '9') {
+                if(!Character.isUpperCase(splitArrow[1].charAt(j))) {
+                    Node son = node(""+splitArrow[1].charAt(j)+"_"+idCount).with(Label.of(""+splitArrow[1].charAt(j)));
                     idCount++;
                     parent = parent.link(to(son));
                     System.out.println(""+splitArrow[1].charAt(j)+"_"+idCount);
@@ -156,7 +158,7 @@ public class CharGrammar {
                         notFinalCount++;
                         levelMap.replace(splitArrow[1].charAt(j), levelMap.get(splitArrow[1].charAt(j)) + 1);
                     }
-                    Node son = node(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j)));
+                    Node son = node(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j))).with(Label.of(""+splitArrow[1].charAt(j)));
                     parent = parent.link(to(son));
                     System.out.println(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j)));
                 }
