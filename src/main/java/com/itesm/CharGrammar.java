@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
@@ -25,12 +26,12 @@ public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
     public Character initial;
     public HashSet<Character> variables;
-    public String empty;
+    public char empty;
 
     public CharGrammar(){
         grammarMap = new HashMap<>();
         variables =  new HashSet<>();
-        empty = "$";
+        empty = '$';
     }
 
     public CharGrammar(String[] strs) {
@@ -69,8 +70,6 @@ public class CharGrammar {
 //        System.out.println("Done");
     }
 
-    public void naiveBelongsUI(){
-    }
 
     public boolean naiveBelongs(String target) {
         String current = ""+initial;
@@ -83,7 +82,6 @@ public class CharGrammar {
         return tmp.getLeft();
     }
 
-    public void drawDerivationTree(String derivationTree) {
         System.out.println(derivationTree);
         try {
             createGraph(derivationTree);
@@ -170,10 +168,11 @@ public class CharGrammar {
     }
 
     public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
-        if (target.equals(accumulator)) {
+        String accumulatorCompare = accumulator.replaceAll("\\$", "");
+        if (target.equals(accumulatorCompare)) {
             return new ImmutablePair<>(true, derivationTree);
         }
-        if (isPartialMatch(target, accumulator)) {
+        if (isPartialMatchFromLeft(target, accumulator)) {
             ArrayList<Integer> positions = getVariablePositions(accumulator);
             for (Integer position: positions) {
                 List<String> tmp =  grammarMap.get(accumulator.charAt(position));
@@ -201,14 +200,22 @@ public class CharGrammar {
         return positions;
     }
 
-    // TODO: Potential bug if current has no more variables and its length is greater than target
-    public boolean isPartialMatch(String target, String current) {
-        char[] currentChars = current.toCharArray();
+    public boolean isPartialMatchFromLeft(String target, String current) {
+        ArrayList<Character> tmpCurrentChars = new ArrayList<>();
+        String currentCompare = current.replaceAll("\\$", "");
+        for (char c : currentCompare.toCharArray()) {
+            if (Character.isUpperCase(c)){
+                break;
+            }
+            tmpCurrentChars.add(c);
+        }
+        Character[] currentChars = new Character[tmpCurrentChars.size()];
+        currentChars = tmpCurrentChars.toArray(currentChars);
         char[] targetChars = target.toCharArray();
         int minLength = Math.min(currentChars.length, targetChars.length);
-
-        for (int i = 0; i < minLength; i++) {
-            if (currentChars[i] != targetChars[i] && !variables.contains(currentChars[i])) {
+        if (currentChars.length > targetChars.length) return false;
+        for (int i = 0; i < currentChars.length; i++) {
+            if (currentChars[i] != targetChars[i]) {
                 return false;
             }
         }
