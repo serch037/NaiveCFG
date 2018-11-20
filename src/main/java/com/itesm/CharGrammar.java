@@ -161,7 +161,6 @@ public class CharGrammar {
                 } else {
                     if(!levelMap.containsKey(splitArrow[1].charAt(j))){
                         levelMap.put(splitArrow[1].charAt(j),0);
-                        //notFinalCount++;
                     } else {
                         notFinalCount++;
                         levelMap.replace(splitArrow[1].charAt(j), levelMap.get(splitArrow[1].charAt(j)) + 1);
