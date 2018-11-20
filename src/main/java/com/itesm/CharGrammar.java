@@ -80,6 +80,9 @@ public class CharGrammar {
             System.out.println(tmp.getRight());
             drawDerivationTree(tmp.getRight());
         }
+        else {
+            System.out.printf("La cadena %s no es aceptada\n", target);
+        }
         return tmp.getLeft();
     }
 
