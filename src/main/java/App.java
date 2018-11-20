@@ -30,9 +30,7 @@ public class App {
         nodes.add(mutNode("3").add((Label.of("A"))));
         nodes.get(0).addLink(nodes.get(1));
         nodes.get(1).addLink(nodes.get(2));
-        for (MutableNode node: nodes) {
-            g.add(node);
-        }
+        g.add(nodes.get(0));
         Graphviz.fromGraph(g).width(200).render(Format.PNG).toFile(new File("ex1m.png"));
 
     }
