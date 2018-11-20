@@ -77,6 +77,7 @@ public class CharGrammar {
         Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
         if (tmp.getLeft()){
             System.out.printf("La cadena %s es aceptada\n", target);
+            System.out.println(tmp.getRight());
             drawDerivationTree(tmp.getRight());
         }
         return tmp.getLeft();
@@ -204,24 +205,22 @@ public class CharGrammar {
 
     public boolean isPartialMatchFromLeft(String target, String current) {
         ArrayList<Character> tmpCurrentChars = new ArrayList<>();
-        String currentCompare = current.replaceAll("\\$", "");
-        for (char c : currentCompare.toCharArray()) {
-            if (Character.isUpperCase(c)){
-                break;
+        String currentCompare = current.replaceAll("[A-Z\\$]", "");
+        if (currentCompare.length() > target.length()) return false;
+        return  isSubsequence(target, currentCompare);
+    }
+
+    public boolean isSubsequence(String target, String current) {
+        if (current.length() == 0) return true;
+        int indexC = 0, indexT= 0;
+        while (indexT < target.length()) {
+            if (target.charAt(indexT) == current.charAt(indexC)) {
+                indexC++;
+                if (indexC == current.length()) return true;
             }
-            tmpCurrentChars.add(c);
+            indexT++;
         }
-        Character[] currentChars = new Character[tmpCurrentChars.size()];
-        currentChars = tmpCurrentChars.toArray(currentChars);
-        char[] targetChars = target.toCharArray();
-        int minLength = Math.min(currentChars.length, targetChars.length);
-        if (currentChars.length > targetChars.length) return false;
-        for (int i = 0; i < currentChars.length; i++) {
-            if (currentChars[i] != targetChars[i]) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     public String substitute(String str, int index, String other) {

@@ -17,6 +17,8 @@ public class CharGrammarTestChar {
         assertTrue(charGrammar.isPartialMatchFromLeft("0011", "0011"));
         assertFalse(charGrammar.isPartialMatchFromLeft("0011", "0010"));
         assertTrue(charGrammar.isPartialMatchFromLeft("0011", "00BB"));
+        createTest4();
+        assertFalse(charGrammar.isPartialMatchFromLeft("a+a*a", "E+T+T"));
     }
 
     @Test
@@ -39,6 +41,15 @@ public class CharGrammarTestChar {
     public void acceptsStringTest3() {
         createTest3();
         assertTrue(charGrammar.naiveBelongs("000#111"));
+    }
+
+    @Test
+    public void acceptsStringTest4() {
+        createTest4();
+        assertTrue(charGrammar.naiveBelongs("a+a"));
+        assertFalse(charGrammar.naiveBelongs("a+"));
+        //assertTrue(charGrammar.naiveBelongs("a+a*a"));
+        //assertTrue(charGrammar.naiveBelongs("(a+a)*a"));
     }
 
     @Test
@@ -66,6 +77,14 @@ public class CharGrammarTestChar {
         String f1 = "A -> 0A1";
         String f2 = "A -> B";
         String f3 = "B -> #";
+        String[] tmp = new String[]{f1, f2, f3};
+        charGrammar = new CharGrammar(tmp);
+    }
+
+    private void createTest4() {
+        String f1 = "E -> E+T|T";
+        String f2 = "T -> T*F|F";
+        String f3 = "F -> (E)|a";
         String[] tmp = new String[]{f1, f2, f3};
         charGrammar = new CharGrammar(tmp);
     }
