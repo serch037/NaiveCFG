@@ -43,6 +43,32 @@ public class CharGrammar {
         parseStrings(strs);
     }
 
+    public class ValueNode{
+        MutableNode node;
+        char value;
+        List<ValueNode> children;
+        List<ValueNode> variableChildren;
+
+
+        public ValueNode(char value) {
+            this.value = value;
+            this.node = mutNode(UUID.randomUUID().toString()).add(Label.of(""+value));
+        }
+
+        public void setChildren(String value) {
+            children = new ArrayList<>();
+            variableChildren =  new ArrayList<>();
+            for( char c : value.toCharArray()){
+                ValueNode tmpNode = new ValueNode(c);
+                this.node.addLink(tmpNode.node);
+                children.add(tmpNode);
+                if (Character.isUpperCase(c)) {
+                    variableChildren.add(tmpNode);
+                }
+            }
+        }
+    }
+
     //S->0A|0B|^
     public void parseStrings(String[] strings) {
         Pattern pattern = Pattern.compile("(\\w+)\\s?(?:->)\\s?(.*)$");
@@ -90,27 +116,34 @@ public class CharGrammar {
         return tmp.getLeft();
     }
 
-    public void drawDerivationTree(String derivationTree){
-        System.out.println(derivationTree);
-        try {
-            createGraph(derivationTree);
-        } catch(Exception e) {
-            System.out.println("Exception");
+    public void drawDerivationTree(String derivaitionTree){
+        Stack<ValueNode> nodeQueue = new Stack<>();
+        String[] steps = derivaitionTree.split("\\|");
+        int count = 1;
+        ValueNode root = new ValueNode(steps[0].charAt(0));
+        nodeQueue.add(root);
+        while (!nodeQueue.isEmpty()){
+            ValueNode head = nodeQueue.pop();
+            String[] values = steps[count].split("\\->");
+            String variables = values[1].replaceAll("[^A-Z]", "");
+            head.setChildren(values[1]);
+            for (int i = head.variableChildren.size()-1; i >=0 ; i--) {
+                nodeQueue.add(head.variableChildren.get(i));
+            }
+            count++;
+            System.out.println();
         }
-        
-    }
-
-    
-    public void createGraph(String derivationTree) throws IOException{
-        ArrayList<Node> nodes = createNodesArray(derivationTree);
+        System.out.println("");
         Graph graph = graph("ProyectoMates").directed().graphAttr().with(RankDir.TOP_TO_BOTTOM);
-        for(Node n:nodes) {
-            graph = graph.with(n);
+        graph = graph.with(root.node);
+        try {
+            File tmpImage = File.createTempFile("tmp", ".png", new File("images/"));
+            Graphviz.fromGraph(graph).height(1000).render(Format.PNG).toFile(tmpImage);
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(tmpImage);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        File tmpImage = File.createTempFile("tmp", ".png", new File("images/"));
-        Graphviz.fromGraph(graph).height(1000).render(Format.PNG).toFile(tmpImage);
-        Desktop desktop = Desktop.getDesktop();
-        desktop.open(tmpImage);
     }
 
     //S->0B|B->0BB|B->1|B->1S|S->0B|B->1S|S->0B|B->1
@@ -137,11 +170,6 @@ public class CharGrammar {
                     num = (levelMap.get(splitArrow[0].charAt(0))) - notFinalCount;
                 }
                 if(notFinalCount>-1){
-                    //if(notFinalCount>1) {
-                    //    levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) - 1);
-                    //} else {
-                    //    notFinalCount--;
-                    //}
                     notFinalCount--;
                 } else {
                     levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) + 1);
