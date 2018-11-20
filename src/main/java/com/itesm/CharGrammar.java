@@ -83,7 +83,8 @@ public class CharGrammar {
     }
 
     public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
-        if (target.equals(accumulator)) {
+        String accumulatorCompare = accumulator.replaceAll("\\$", "");
+        if (target.equals(accumulatorCompare)) {
             return new ImmutablePair<>(true, derivationTree);
         }
         if (isPartialMatchFromLeft(target, accumulator)) {
@@ -114,11 +115,11 @@ public class CharGrammar {
         return positions;
     }
 
-    // TODO: Potential bug if current has no more variables and its length is greater than target
     public boolean isPartialMatchFromLeft(String target, String current) {
         ArrayList<Character> tmpCurrentChars = new ArrayList<>();
-        for (char c : current.toCharArray()) {
-            if (Character.isUpperCase(c) || c == empty){
+        String currentCompare = current.replaceAll("\\$", "");
+        for (char c : currentCompare.toCharArray()) {
+            if (Character.isUpperCase(c)){
                 break;
             }
             tmpCurrentChars.add(c);
@@ -127,7 +128,6 @@ public class CharGrammar {
         currentChars = tmpCurrentChars.toArray(currentChars);
         char[] targetChars = target.toCharArray();
         int minLength = Math.min(currentChars.length, targetChars.length);
-
         if (currentChars.length > targetChars.length) return false;
         for (int i = 0; i < currentChars.length; i++) {
             if (currentChars[i] != targetChars[i]) {

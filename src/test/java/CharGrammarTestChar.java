@@ -21,8 +21,8 @@ public class CharGrammarTestChar {
     @Test
     public void acceptsStringTest1(){
         createTest1_1();
+       assertTrue(charGrammar.naiveBelongs("1"));
         assertTrue(charGrammar.naiveBelongs("11"));
-        assertTrue(charGrammar.naiveBelongs("1"));
         assertTrue(charGrammar.naiveBelongs("111"));
         assertTrue(charGrammar.naiveBelongs("00110101"));
     }
