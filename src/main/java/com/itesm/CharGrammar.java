@@ -1,12 +1,25 @@
 package com.itesm;
-
+import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.attribute.RankDir;
+import guru.nidi.graphviz.attribute.Shape;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.*;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+//import java.awt.*;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static guru.nidi.graphviz.model.Factory.*;
 
 public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
@@ -70,8 +83,77 @@ public class CharGrammar {
         return tmp.getLeft();
     }
 
-    public void drawDerivationTree(String derivationTree){
+    public void drawDerivationTree(String derivationTree) {
         System.out.println(derivationTree);
+        try {
+            createGraph(derivationTree);
+        } catch(Exception e) {
+            System.out.println("Exception");
+        }
+        
+    }
+
+    
+    public void createGraph(String derivationTree) throws IOException{
+        ArrayList<Node> nodes = createNodesArray(derivationTree);
+        Graph graph = graph("ProyectoMates").directed().graphAttr().with(RankDir.LEFT_TO_RIGHT);
+        for(Node n:nodes) {
+            graph = graph.with(n);
+        }
+        File tmpImage = File.createTempFile("tmp", ".png", new File("images/"));
+        Graphviz.fromGraph(graph).height(1000).render(Format.PNG).toFile(tmpImage);
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(tmpImage);
+    }
+
+    //S->0B|B->0BB|B->1|B->1S|S->0B|B->1S|S->0B|B->1
+    public ArrayList<Node> createNodesArray(String derivationTree) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        String[] splitOr = derivationTree.split("\\|");
+        HashMap<Character, Integer> levelMap = new HashMap<>();
+        int notFinalCount = 0;
+        int idCount = 0;
+        boolean afterArrow = false;
+        for(int i = 1; i<splitOr.length; i++) {
+            System.out.println(splitOr[i]+": ");
+            String[] splitArrow = splitOr[i].split("->");
+
+            if(!levelMap.containsKey(splitArrow[0].charAt(0))){
+                levelMap.put(splitArrow[0].charAt(0),0);
+            } else {
+                if(notFinalCount>0){
+                    //if(notFinalCount>1) {
+                    //    levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) - 1);
+                    //} else {
+                    //    notFinalCount--;
+                    //}
+                    notFinalCount--;
+                } else {
+                    levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) + 1);
+                }
+            }
+            Node parent = node(""+splitArrow[0].charAt(0)+"_"+levelMap.get(splitArrow[0].charAt(0)));
+            for(int j = 0; j<splitArrow[1].length(); j++) {
+                System.out.println(splitArrow[1].charAt(j));
+                if(splitArrow[1].charAt(j) >= '0' && splitArrow[1].charAt(j) <= '9') {
+                    Node son = node(""+splitArrow[1].charAt(j)+"_"+idCount);
+                    idCount++;
+                    parent = parent.link(to(son));
+                } else {
+                    notFinalCount++;
+                    if(!levelMap.containsKey(splitArrow[1].charAt(j))){
+                        levelMap.put(splitArrow[1].charAt(j),0);
+                    } else {
+
+                        levelMap.replace(splitArrow[1].charAt(j), levelMap.get(splitArrow[1].charAt(j)) + 1);
+                    }
+                    Node son = node(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j)));
+                    parent = parent.link(to(son));
+                }
+            }
+            nodes.add(parent);
+        }
+        return nodes;
     }
 
     public Pair<Boolean, String> naiveBelongsHelper(String target, String accumulator, String derivationTree) {
