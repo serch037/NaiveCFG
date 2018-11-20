@@ -11,9 +11,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 //import java.awt.*;
 import java.awt.Desktop;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.*;
+import java.awt.event.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -157,7 +161,7 @@ public class CharGrammar {
                 } else {
                     if(!levelMap.containsKey(splitArrow[1].charAt(j))){
                         levelMap.put(splitArrow[1].charAt(j),0);
-                        notFinalCount++;
+                        //notFinalCount++;
                     } else {
                         notFinalCount++;
                         levelMap.replace(splitArrow[1].charAt(j), levelMap.get(splitArrow[1].charAt(j)) + 1);
@@ -232,5 +236,59 @@ public class CharGrammar {
     }
     public static void main(String[] args) {
         System.out.println("Hello");
+        //Input GUI set up
+        JFrame frame = new JFrame("Grammar GUI");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500,200);
+        //center middle of the window
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        JPanel panel1 = new JPanel();
+        JPanel panel2 = new JPanel();
+        JPanel panel3 = new JPanel();
+
+        JLabel label1 = new JLabel("Enter transition S->a|aA");
+        JTextField txtfield1 = new JTextField(10);
+        JLabel label2 = new JLabel("Enter string to check");
+        JTextField txtfield2 = new JTextField(10);
+        JButton addBtn = new JButton("Add grammar");
+        JButton endBtn = new JButton("Check if accepts");
+        //addBtn.addActionListener(this);
+        //endBtn.addActionListener(this);
+
+        panel1.add(label1);
+        panel1.add(txtfield1);
+        panel2.add(label2);
+        panel2.add(txtfield2);
+        panel3.add(addBtn);
+        panel3.add(endBtn);
+
+        frame.getContentPane().add(BorderLayout.NORTH,panel1);
+        frame.getContentPane().add(BorderLayout.CENTER,panel2);
+        frame.getContentPane().add(BorderLayout.SOUTH,panel3);
+
+        frame.setVisible(true);
+
+        List<String> fs = new ArrayList<>();
+        addBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String trn = "";
+                trn = txtfield1.getText();
+                System.out.println("Add transition pressed and read: "+trn);
+                fs.add(trn);
+            }
+        });
+
+        endBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent w) {
+                System.out.println("Chech if accepts");
+                String strToCheck = "";
+                strToCheck = txtfield2.getText();
+                String[] test = fs.toArray(new String[fs.size()]);
+                CharGrammar charGrammar = new CharGrammar(test);
+                charGrammar.naiveBelongs(strToCheck);
+                
+            }
+        });
     }
 }
