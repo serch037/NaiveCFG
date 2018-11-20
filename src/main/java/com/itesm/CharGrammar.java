@@ -111,17 +111,25 @@ public class CharGrammar {
         ArrayList<Node> nodes = new ArrayList<>();
         String[] splitOr = derivationTree.split("\\|");
         HashMap<Character, Integer> levelMap = new HashMap<>();
-        int notFinalCount = 0;
+        int notFinalCount = -1;
         int idCount = 0;
-        boolean afterArrow = false;
+        boolean afterPlusOne = false;
+        boolean otherbool = false;
         for(int i = 1; i<splitOr.length; i++) {
             System.out.println(splitOr[i]+": ");
             String[] splitArrow = splitOr[i].split("->");
 
+            int num = 0;
+
             if(!levelMap.containsKey(splitArrow[0].charAt(0))){
                 levelMap.put(splitArrow[0].charAt(0),0);
             } else {
-                if(notFinalCount>0){
+                if(notFinalCount == -1) {
+                    num = (levelMap.get(splitArrow[0].charAt(0)));
+                } else {
+                    num = (levelMap.get(splitArrow[0].charAt(0))) - notFinalCount;
+                }
+                if(notFinalCount>-1){
                     //if(notFinalCount>1) {
                     //    levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) - 1);
                     //} else {
@@ -132,24 +140,29 @@ public class CharGrammar {
                     levelMap.replace(splitArrow[0].charAt(0), levelMap.get(splitArrow[0].charAt(0)) + 1);
                 }
             }
-            Node parent = node(""+splitArrow[0].charAt(0)+"_"+levelMap.get(splitArrow[0].charAt(0)));
+            
+            Node parent = node(""+splitArrow[0].charAt(0)+"_"+num);
+            System.out.println(""+splitArrow[0].charAt(0)+"_"+num+"->");
             for(int j = 0; j<splitArrow[1].length(); j++) {
-                System.out.println(splitArrow[1].charAt(j));
+                //System.out.println(splitArrow[1].charAt(j));
                 if(splitArrow[1].charAt(j) >= '0' && splitArrow[1].charAt(j) <= '9') {
                     Node son = node(""+splitArrow[1].charAt(j)+"_"+idCount);
                     idCount++;
                     parent = parent.link(to(son));
+                    System.out.println(""+splitArrow[1].charAt(j)+"_"+idCount);
                 } else {
-                    notFinalCount++;
                     if(!levelMap.containsKey(splitArrow[1].charAt(j))){
                         levelMap.put(splitArrow[1].charAt(j),0);
+                        notFinalCount++;
                     } else {
-
+                        notFinalCount++;
                         levelMap.replace(splitArrow[1].charAt(j), levelMap.get(splitArrow[1].charAt(j)) + 1);
                     }
                     Node son = node(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j)));
                     parent = parent.link(to(son));
+                    System.out.println(""+splitArrow[1].charAt(j)+"_"+levelMap.get(splitArrow[1].charAt(j)));
                 }
+                System.out.println("after plus one: "+afterPlusOne+" not final count: "+notFinalCount+" id count: "+idCount);
             }
             nodes.add(parent);
         }
