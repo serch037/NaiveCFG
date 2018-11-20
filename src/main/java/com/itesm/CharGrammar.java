@@ -1,7 +1,6 @@
 package com.itesm;
 import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.attribute.RankDir;
-import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
@@ -22,7 +21,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
@@ -101,19 +99,22 @@ public class CharGrammar {
     }
 
 
-    public boolean naiveBelongs(String target) {
+    public Pair<Boolean, String> naiveBelongs(String target) {
         String current = ""+initial;
         String derivationTree = ""+initial;
         Pair<Boolean, String> tmp = naiveBelongsHelper(target, current, derivationTree);
+        String message = "";
         if (tmp.getLeft()){
-            System.out.printf("La cadena %s es aceptada\n", target);
+            message = String.format("String %s is accepted\n", target);
+            System.out.print(message);
             System.out.println(tmp.getRight());
             drawDerivationTree(tmp.getRight());
         }
         else {
-            System.out.printf("La cadena %s no es aceptada\n", target);
+            message = String.format("String %s is not accepted\n", target);
+            System.out.print(message);
         }
-        return tmp.getLeft();
+        return new ImmutablePair<>(tmp.getLeft(), message);
     }
 
     public void drawDerivationTree(String derivaitionTree){
@@ -251,13 +252,14 @@ public class CharGrammar {
 
         endBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent w) {
-                System.out.println("Chech if accepts");
+                System.out.println("Check if accepts");
                 String strToCheck = "";
                 strToCheck = txtfield2.getText();
                 String[] test = fs.toArray(new String[fs.size()]);
                 CharGrammar charGrammar = new CharGrammar(test);
-                charGrammar.naiveBelongs(strToCheck);
-                
+                System.out.println();
+                String message = charGrammar.naiveBelongs(strToCheck).getRight();
+                JOptionPane.showMessageDialog(frame, message);
             }
         });
     }

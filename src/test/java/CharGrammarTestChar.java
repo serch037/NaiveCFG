@@ -24,29 +24,29 @@ public class CharGrammarTestChar {
     @Test
     public void acceptsStringTest1() {
         createTest1_1();
-        assertTrue(charGrammar.naiveBelongs("1"));
-         assertTrue(charGrammar.naiveBelongs("11"));
-        assertTrue(charGrammar.naiveBelongs("111"));
-        assertTrue(charGrammar.naiveBelongs("00110101"));
+        assertTrue(charGrammar.naiveBelongs("1").getLeft());
+         assertTrue(charGrammar.naiveBelongs("11").getLeft());
+        assertTrue(charGrammar.naiveBelongs("111").getLeft());
+        assertTrue(charGrammar.naiveBelongs("00110101").getLeft());
     }
 
     @Test
     public void acceptsStringTest2() {
         createTest2();
-        assertFalse(charGrammar.naiveBelongs("aabbb"));
-        assertTrue(charGrammar.naiveBelongs("ab"));
+        assertFalse(charGrammar.naiveBelongs("aabbb").getLeft());
+        assertTrue(charGrammar.naiveBelongs("ab").getLeft());
     }
 
     @Test
     public void acceptsStringTest3() {
         createTest3();
-        assertTrue(charGrammar.naiveBelongs("000#111"));
+        assertTrue(charGrammar.naiveBelongs("000#111").getLeft());
     }
 
     @Test
     public void acceptsStringTest4() {
         createTest4();
-        assertTrue(charGrammar.naiveBelongs("a+a"));
+        assertTrue(charGrammar.naiveBelongs("a+a").getLeft());
         //assertFalse(charGrammar.naiveBelongs("a+"));
         //assertTrue(charGrammar.naiveBelongs("a+a*a"));
         //assertTrue(charGrammar.naiveBelongs("(a+a)*a"));
