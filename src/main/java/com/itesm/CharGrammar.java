@@ -1,28 +1,29 @@
 package com.itesm;
+
 import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.attribute.RankDir;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.*;
-
+import guru.nidi.graphviz.model.Graph;
+import guru.nidi.graphviz.model.MutableNode;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-//import java.awt.*;
-import java.awt.Desktop;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.swing.*;
-import java.awt.event.*;
-
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static guru.nidi.graphviz.model.Factory.*;
+import static guru.nidi.graphviz.model.Factory.graph;
+import static guru.nidi.graphviz.model.Factory.mutNode;
+
+//import java.awt.*;
 
 public class CharGrammar {
     public Map<Character, List<String>> grammarMap;
@@ -132,9 +133,7 @@ public class CharGrammar {
                 nodeQueue.add(head.variableChildren.get(i));
             }
             count++;
-            System.out.println();
         }
-        System.out.println("");
         Graph graph = graph("ProyectoMates").directed().graphAttr().with(RankDir.TOP_TO_BOTTOM);
         graph = graph.with(root.node);
         try {
@@ -200,10 +199,6 @@ public class CharGrammar {
         return false;
     }
 
-    public String substitute(String str, int index, String other) {
-        if (other.equals(this.empty)) other = "";
-        return str.substring(0, index) + other + str.substring(index + 1, str.length());
-    }
     public static void main(String[] args) {
         System.out.println("Hello");
         //Input GUI set up
@@ -242,8 +237,7 @@ public class CharGrammar {
         List<String> fs = new ArrayList<>();
         addBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String trn = "";
-                trn = txtfield1.getText();
+                String trn = txtfield1.getText();
                 System.out.println("Add transition pressed and read: "+trn);
                 fs.add(trn);
             }
@@ -252,8 +246,7 @@ public class CharGrammar {
         endBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent w) {
                 System.out.println("Check if accepts");
-                String strToCheck = "";
-                strToCheck = txtfield2.getText();
+                String strToCheck = txtfield2.getText();
                 String[] test = fs.toArray(new String[fs.size()]);
                 CharGrammar charGrammar = new CharGrammar(test);
                 System.out.println();
@@ -261,5 +254,10 @@ public class CharGrammar {
                 JOptionPane.showMessageDialog(frame, message);
             }
         });
+    }
+
+    public String substitute(String str, int index, String other) {
+        if (other.equals("" + this.empty)) other = "";
+        return str.substring(0, index) + other + str.substring(index + 1);
     }
 }
